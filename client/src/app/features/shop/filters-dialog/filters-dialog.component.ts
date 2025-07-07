@@ -8,7 +8,13 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-filters-dialog',
-  imports: [MatDivider, MatSelectionList, MatListOption, MatButton, FormsModule],
+  imports: [
+    MatDivider,
+    MatSelectionList,
+    MatListOption,
+    MatButton,
+    FormsModule,
+  ],
   templateUrl: './filters-dialog.component.html',
   styleUrl: './filters-dialog.component.scss',
 })
@@ -20,10 +26,10 @@ export class FiltersDialogComponent {
   selectedBrands: string[] = this.data.selectedBrands;
   selectedTypes: string[] = this.data.selectedTypes;
 
-  applyFilters(){
+  applyFilters() {
     this.dialogRef.close({
       selectedBrands: this.selectedBrands,
-      selectedTypes: this.selectedTypes
-    })
+      selectedTypes: this.selectedTypes,
+    });
   }
 }
