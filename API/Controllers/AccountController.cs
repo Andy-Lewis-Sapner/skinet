@@ -17,10 +17,13 @@ public class AccountController(SignInManager<AppUser> signInManager) : BaseApiCo
             FirstName = registerDto.FirstName,
             LastName = registerDto.LastName,
             Email = registerDto.Email,
-            UserName = registerDto.Email
+            UserName = registerDto.Email,
         };
 
-        IdentityResult result = await signInManager.UserManager.CreateAsync(user, registerDto.Password);
+        IdentityResult result = await signInManager.UserManager.CreateAsync(
+            user,
+            registerDto.Password
+        );
 
         if (!result.Succeeded)
         {
@@ -46,18 +49,21 @@ public class AccountController(SignInManager<AppUser> signInManager) : BaseApiCo
     [HttpGet("user-info")]
     public async Task<ActionResult> GetUserInfo()
     {
-        if (User.Identity?.IsAuthenticated == false) return NoContent();
+        if (User.Identity?.IsAuthenticated == false)
+            return NoContent();
         AppUser? user = await signInManager.UserManager.GetUserByEmailWithAddress(User);
-        return Ok(new
-        {
-            user.FirstName,
-            user.LastName,
-            user.Email,
-            Address = user.Address?.ToDto()
-        });
+        return Ok(
+            new
+            {
+                user.FirstName,
+                user.LastName,
+                user.Email,
+                Address = user.Address?.ToDto(),
+            }
+        );
     }
 
-    [HttpGet]
+    [HttpGet("auth-status")]
     public ActionResult GetAuthState()
     {
         return Ok(new { isAuthenticated = User.Identity?.IsAuthenticated ?? false });
@@ -69,11 +75,14 @@ public class AccountController(SignInManager<AppUser> signInManager) : BaseApiCo
     {
         AppUser user = await signInManager.UserManager.GetUserByEmailWithAddress(User);
 
-        if (user.Address == null) user.Address = addressDto.ToEntity();
-        else user.Address.UpdateFromDto(addressDto);
+        if (user.Address == null)
+            user.Address = addressDto.ToEntity();
+        else
+            user.Address.UpdateFromDto(addressDto);
 
         IdentityResult result = await signInManager.UserManager.UpdateAsync(user);
-        if (!result.Succeeded) return BadRequest("Problem updating user address");
+        if (!result.Succeeded)
+            return BadRequest("Problem updating user address");
         return Ok(user.Address.ToDto());
-    } 
+    }
 }
