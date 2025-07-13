@@ -7,8 +7,7 @@ using Product = Core.Entities.Product;
 namespace Infrastructure.Services;
 
 public class PaymentService(IConfiguration config, ICartService cartService,
-    IGenericRepository<Product> productRepo,
-    IGenericRepository<DeliveryMethod> dmRepo) : IPaymentService
+    IUnitOfWork unit) : IPaymentService
 {
     public async Task<ShoppingCart?> CreateOrUpdatePaymentIntent(string cartId)
     {
@@ -19,14 +18,15 @@ public class PaymentService(IConfiguration config, ICartService cartService,
         decimal shippingPrice = 0m;
         if (cart.DeliveryMethodId.HasValue)
         {
-            DeliveryMethod? deliveryMethod = await dmRepo.GetByIdAsync((int)cart.DeliveryMethodId);
+            DeliveryMethod? deliveryMethod = await unit.Repository<DeliveryMethod>()
+                .GetByIdAsync((int)cart.DeliveryMethodId);
             if (deliveryMethod == null) return null;
             shippingPrice = deliveryMethod.Price;
         }
 
         foreach (CartItem item in cart.Items)
         {
-            Product? productItem = await productRepo.GetByIdAsync(item.ProductId);
+            Product? productItem = await unit.Repository<Product>().GetByIdAsync(item.ProductId);
             if (productItem == null) return null;
             if (item.Price != productItem.Price) item.Price = productItem.Price;
         }
