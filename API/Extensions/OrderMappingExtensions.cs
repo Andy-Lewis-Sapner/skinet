@@ -24,14 +24,15 @@ public static class OrderMappingExtensions
         };
     }
 
-    public static OrderItemDto ToDto(this OrderItem orderItem) {
+    public static OrderItemDto ToDto(this OrderItem orderItem)
+    {
         return new OrderItemDto
         {
             ProductId = orderItem.ItemOrdered.ProductId,
             ProductName = orderItem.ItemOrdered.ProductName,
             PictureUrl = orderItem.ItemOrdered.PictureUrl,
             Price = orderItem.Price,
-            Quantity = orderItem.Qunatity
+            Quantity = orderItem.Quantity
         };
     }
 }

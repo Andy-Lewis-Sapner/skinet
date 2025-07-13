@@ -38,7 +38,7 @@ public class OrdersController(ICartService cartService, IUnitOfWork unit) : Base
             {
                 ItemOrdered = itemOrdered,
                 Price = item.Price,
-                Qunatity = item.Quantity
+                Quantity = item.Quantity
             };
 
             items.Add(orderItem);
@@ -53,7 +53,7 @@ public class OrdersController(ICartService cartService, IUnitOfWork unit) : Base
             OrderItems = items,
             DeliveryMethod = deliveryMethod,
             ShippingAddress = orderDto.ShippingAddress,
-            SubTotal = items.Sum(x => x.Price * x.Qunatity),
+            SubTotal = items.Sum(x => x.Price * x.Quantity),
             PaymentSummary = orderDto.PaymentSummary,
             PaymentIntentId = cart.PaymentIntentId,
             BuyerEmail = email

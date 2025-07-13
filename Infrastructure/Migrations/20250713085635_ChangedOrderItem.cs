@@ -5,24 +5,24 @@
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class PaymentSummaryCorrection : Migration
+    public partial class ChangedOrderItem : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
-                name: "PaymentSummary_Year",
-                table: "Orders",
-                newName: "PaymentSummary_ExpYear");
+                name: "Qunatity",
+                table: "OrderItems",
+                newName: "Quantity");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
-                name: "PaymentSummary_ExpYear",
-                table: "Orders",
-                newName: "PaymentSummary_Year");
+                name: "Quantity",
+                table: "OrderItems",
+                newName: "Qunatity");
         }
     }
 }

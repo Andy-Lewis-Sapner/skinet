@@ -135,6 +135,7 @@ export class StripeService {
   }
 
   createOrUpdatePaymentIntent() {
+    console.log('createOrUpdatePaymentIntent');
     const cart = this.cartService.cart();
     if (!cart) throw new Error('Problem with cart');
     return this.http.post<Cart>(this.baseUrl + 'payments/' + cart.id, {}).pipe(
