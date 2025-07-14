@@ -52,12 +52,16 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
     .WithOrigins("http://localhost:4200", "https://localhost:4200"));
 
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseAuthentication(); // Authenticate for hub
+app.UseAuthorization(); // Authorize for hub
+
+app.UseDefaultFiles(); // For hosting wwwroot angular client
+app.UseStaticFiles(); // For hosting wwwroot angular client
 
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<AppUser>(); // api/login
 app.MapHub<NotificationHub>("/hub/notifications");
+app.MapFallbackToController("Index", "Fallback");
 
 try
 {
