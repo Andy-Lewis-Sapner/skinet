@@ -108,7 +108,7 @@ export class StripeService {
     const result = await elements.submit();
     if (result.error) throw new Error(result.error.message);
     if (stripe) {
-      return await stripe.createConfirmationToken({elements});
+      return await stripe.createConfirmationToken({ elements });
     } else {
       throw new Error('Stripe not available');
     }
@@ -125,22 +125,24 @@ export class StripeService {
       return await stripe.confirmPayment({
         clientSecret: clientSecret,
         confirmParams: {
-          confirmation_token: confirmationToken.id
+          confirmation_token: confirmationToken.id,
         },
-        redirect: 'if_required'
-      })
+        redirect: 'if_required',
+      });
     } else {
       throw new Error('Unable to load Stripe');
     }
   }
 
   createOrUpdatePaymentIntent() {
-    console.log('createOrUpdatePaymentIntent');
     const cart = this.cartService.cart();
+    const hasClientSecret = !!cart?.clientSecret;
     if (!cart) throw new Error('Problem with cart');
     return this.http.post<Cart>(this.baseUrl + 'payments/' + cart.id, {}).pipe(
-      map((cart) => {
-        this.cartService.setCart(cart);
+      map(async (cart) => {
+        if (!hasClientSecret) {
+          await firstValueFrom(this.cartService.setCart(cart));
+        }
         return cart;
       })
     );

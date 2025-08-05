@@ -20,5 +20,6 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             d => d.ToUniversalTime(),
             d => DateTime.SpecifyKind(d, DateTimeKind.Utc)
         );
+        builder.Property(x => x.Discount).HasColumnType("decimal(18,2)");
     }
 }

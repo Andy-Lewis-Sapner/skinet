@@ -23,18 +23,26 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           snackbar.error(err.error.title || err.error);
         }
       }
+
       if (err.status === 401) {
         snackbar.error(err.error.title || err.error);
       }
+
+      if (err.status === 403) {
+        snackbar.error('Forbidden');
+      }
+
       if (err.status === 404) {
         router.navigateByUrl('/not-found');
       }
+
       if (err.status === 500) {
         const navigationExtras: NavigationExtras = {
           state: { error: err.error },
         };
         router.navigateByUrl('/server-error', navigationExtras);
       }
+
       return throwError(() => err);
     })
   );

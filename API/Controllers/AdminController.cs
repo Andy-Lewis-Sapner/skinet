@@ -1,0 +1,51 @@
+using API.DTOs;
+using API.Extensions;
+using Core.Entities.OrderAggregate;
+using Core.Interfaces;
+using Core.Specifications;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace API.Controllers;
+
+[Authorize(Roles = "Admin")]
+public class AdminController(IUnitOfWork unit, IPaymentService paymentService) 
+    : BaseApiController
+{
+    [HttpGet("orders")]
+    public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetOrders([FromQuery] OrderSpecParams specParams)
+    {
+        OrderSpecification spec = new(specParams);
+        return await CreatePagedResult(unit.Repository<Order>(), spec,
+            specParams.PageIndex, specParams.PageSize, o => o.ToDto());
+    }
+
+    [HttpGet("orders/{id:int}")]
+    public async Task<ActionResult<OrderDto>> GetOrderById(int id)
+    {
+        OrderSpecification spec = new(id);
+        Order? order = await unit.Repository<Order>().GetEntityWithSpec(spec);
+        if (order == null) return BadRequest("No order with that it");
+        return order.ToDto();
+    }
+
+    [HttpPost("orders/refund/{id:int}")]
+    public async Task<ActionResult<OrderDto>> RefundOrder(int id)
+    {
+        OrderSpecification spec = new(id);
+        Order? order = await unit.Repository<Order>().GetEntityWithSpec(spec);
+        if (order == null) return BadRequest("No order with that id");
+        if (order.Status == OrderStatus.Pending)
+            return BadRequest("Payment not received for this order");
+
+        string result = await paymentService.RefundPayment(order.PaymentIntentId);
+        if (result == "succeeded")
+        {
+            order.Status = OrderStatus.Refunded;
+            await unit.Complete();
+            return order.ToDto();
+        }
+
+        return BadRequest("Problem refunding order");
+    }
+}

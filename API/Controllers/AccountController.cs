@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using API.DTOs;
 using API.Extensions;
 using Core.Entities;
@@ -49,9 +50,9 @@ public class AccountController(SignInManager<AppUser> signInManager) : BaseApiCo
     [HttpGet("user-info")]
     public async Task<ActionResult> GetUserInfo()
     {
-        if (User.Identity?.IsAuthenticated == false)
-            return NoContent();
+        if (User.Identity?.IsAuthenticated == false) return NoContent();
         AppUser? user = await signInManager.UserManager.GetUserByEmailWithAddress(User);
+
         return Ok(
             new
             {
@@ -59,6 +60,7 @@ public class AccountController(SignInManager<AppUser> signInManager) : BaseApiCo
                 user.LastName,
                 user.Email,
                 Address = user.Address?.ToDto(),
+                Roles = User.FindFirstValue(ClaimTypes.Role)
             }
         );
     }
