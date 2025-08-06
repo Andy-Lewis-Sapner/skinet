@@ -4,7 +4,6 @@ import { Order } from '../../shared/models/order';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { OrderParams } from '../../shared/models/orderParams';
 import { AdminService } from '../../core/services/admin.service';
-import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import {
   MatLabel,
@@ -22,7 +21,6 @@ import { DialogService } from '../../core/services/dialog.service';
   imports: [
     MatTableModule,
     MatPaginator,
-    MatButton,
     MatIcon,
     MatSelectModule,
     DatePipe,
